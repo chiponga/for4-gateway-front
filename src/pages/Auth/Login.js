@@ -4,10 +4,7 @@ import { Eye, EyeOff, LogIn, Loader2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: 'admin@for4.com',
-    password: '123456'
-  });
+  const [formData, setFormData] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   
@@ -49,7 +46,7 @@ const Login = () => {
           </h2>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <div className="mt-8 space-y-6">
           <div className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
@@ -60,8 +57,9 @@ const Login = () => {
                 name="email"
                 type="email"
                 required
-                value={formData.email}
+                value={formData.email || ''}
                 onChange={handleChange}
+                autoComplete="email"
                 className="block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Digite seu email"
               />
@@ -77,8 +75,9 @@ const Login = () => {
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
-                  value={formData.password}
+                  value={formData.password || ''}
                   onChange={handleChange}
+                  autoComplete="current-password"
                   className="block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
                   placeholder="Digite sua senha"
                 />
@@ -97,8 +96,20 @@ const Login = () => {
             </div>
           </div>
 
+          {/* Botão de esqueci minha senha */}
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => navigate('/forgotPassword')}
+              className="text-sm text-blue-400 hover:text-blue-300 font-medium"
+            >
+              Esqueci minha senha
+            </button>
+          </div>
+
           <button
-            type="submit"
+            type="button"
+            onClick={handleSubmit}
             disabled={loading}
             className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
@@ -115,9 +126,13 @@ const Login = () => {
           <div className="text-center">
             <p className="text-gray-400">
               Não tem uma conta?{' '}
-              <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium">
+              <button
+                type="button"
+                onClick={() => navigate('/register')}
+                className="text-blue-400 hover:text-blue-300 font-medium"
+              >
                 Cadastre-se
-              </Link>
+              </button>
             </p>
           </div>
 
@@ -126,7 +141,7 @@ const Login = () => {
             <p className="text-xs text-blue-200">Email: admin@for4.com</p>
             <p className="text-xs text-blue-200">Senha: 123456</p>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

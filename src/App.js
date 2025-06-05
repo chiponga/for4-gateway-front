@@ -21,6 +21,7 @@ import Marketplace from './pages/Marketplace';
 import Affiliates from './pages/Affiliates';
 import Integrations from './pages/Integrations';
 import Settings from './pages/Settings';
+import ForgotPassword from './pages/Auth/ForgotPassword';
 
 // Componentes UI
 import NotificationContainer from './components/UI/NotificationContainer';
@@ -80,116 +81,127 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Rotas públicas */}
-      <Route 
-        path="/login" 
+      <Route
+        path="/login"
         element={
           <PublicRoute>
             <Login />
           </PublicRoute>
-        } 
+        }
       />
-      <Route 
-        path="/register" 
+      {/* Rotas protegidas */}
+      <Route
+        path="/forgotPassword"
+        element={
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/register"
         element={
           <PublicRoute>
             <Register />
           </PublicRoute>
-        } 
+        }
       />
 
       {/* Rotas protegidas */}
-      <Route 
-        path="/dashboard" 
+      <Route
+        path="/dashboard"
         element={
           <ProtectedRoute>
             <DashboardLayout>
               <Dashboard />
             </DashboardLayout>
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/financial" 
+
+
+
+      <Route
+        path="/financial"
         element={
           <ProtectedRoute>
             <DashboardLayout>
               <Financial />
             </DashboardLayout>
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/products" 
+
+      <Route
+        path="/products"
         element={
           <ProtectedRoute>
             <DashboardLayout>
               <Products />
             </DashboardLayout>
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/marketplace" 
+
+      <Route
+        path="/marketplace"
         element={
           <ProtectedRoute>
             <DashboardLayout>
               <Marketplace />
             </DashboardLayout>
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/affiliates" 
+
+      <Route
+        path="/affiliates"
         element={
           <ProtectedRoute>
             <DashboardLayout>
               <Affiliates />
             </DashboardLayout>
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/integrations" 
+
+      <Route
+        path="/integrations"
         element={
           <ProtectedRoute>
             <DashboardLayout>
               <Integrations />
             </DashboardLayout>
           </ProtectedRoute>
-        } 
+        }
       />
-      
-      <Route 
-        path="/settings" 
+
+      <Route
+        path="/settings"
         element={
           <ProtectedRoute>
             <DashboardLayout>
               <Settings />
             </DashboardLayout>
           </ProtectedRoute>
-        } 
+        }
       />
 
       {/* Rota raiz */}
-      <Route 
-        path="/" 
-        element={<Navigate to="/dashboard" replace />} 
+      <Route
+        path="/"
+        element={<Navigate to="/dashboard" replace />}
       />
 
       {/* Rota 404 */}
-      <Route 
-        path="*" 
+      <Route
+        path="*"
         element={
           <div className="min-h-screen bg-gray-900 flex items-center justify-center">
             <div className="text-center">
               <h1 className="text-4xl font-bold text-white mb-4">404</h1>
               <p className="text-gray-400 mb-6">Página não encontrada</p>
-              <button 
+              <button
                 onClick={() => window.history.back()}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
               >
@@ -197,7 +209,7 @@ const AppRoutes = () => {
               </button>
             </div>
           </div>
-        } 
+        }
       />
     </Routes>
   );
@@ -212,10 +224,10 @@ function App() {
           <Router>
             <div className="App">
               <AppRoutes />
-              
+
               {/* Sistema de Notificações */}
               <NotificationContainer />
-              
+
               {/* Toast notifications */}
               <Toaster
                 position="top-right"

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import {
   BarChart3,
   ShoppingBag,
@@ -18,13 +17,21 @@ import {
   Bell,
   MessageSquare
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+
+// Mock hooks para demonstração - substitua pelas importações reais:
+ import { useLocation, useNavigate } from 'react-router-dom';
+ import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
+
+;
+
+
 
 const DashboardLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const [notifications, setNotifications] = useState([]);
+  const [isHovered, setIsHovered] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -96,28 +103,35 @@ const DashboardLayout = ({ children }) => {
 
   const toggleTheme = () => {
     setDarkMode(!darkMode);
-    // Aqui você implementaria a lógica de mudança de tema
   };
 
   return (
     <div className={`min-h-screen flex ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 transform ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+      <div 
+        className={`fixed inset-y-0 left-0 z-50 transform transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } ${
+          isHovered ? 'w-64' : 'w-16'
+        }`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         
         <div className={`flex flex-col h-full ${
           darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-        } border-r`}>
+        } border-r transition-all duration-300`}>
           
           {/* Logo */}
-          <div className="flex items-center justify-between p-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-bold text-lg">F4</span>
               </div>
-              <span className={`font-bold text-xl ${
+              <span className={`font-bold text-xl transition-all duration-300 whitespace-nowrap ${
                 darkMode ? 'text-white' : 'text-gray-900'
+              } ${
+                isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
               }`}>
                 For4
               </span>
@@ -125,14 +139,16 @@ const DashboardLayout = ({ children }) => {
             
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden text-gray-400 hover:text-gray-600"
+              className={`lg:hidden text-gray-400 hover:text-gray-600 transition-all duration-300 ${
+                isHovered ? 'opacity-100' : 'opacity-0'
+              }`}
             >
               <X className="w-6 h-6" />
             </button>
           </div>
 
           {/* Menu Items */}
-          <nav className="flex-1 px-4 pb-4 space-y-1">
+          <nav className="flex-1 px-2 pb-4 space-y-1">
             {menuItems.map((item) => (
               <div key={item.name}>
                 <button
@@ -140,23 +156,28 @@ const DashboardLayout = ({ children }) => {
                     navigate(item.path);
                     setSidebarOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-colors ${
+                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-all duration-200 group ${
                     isActive(item.path)
                       ? 'bg-blue-600 text-white'
                       : darkMode
                       ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   }`}
+                  title={!isHovered ? item.name : ''}
                 >
-                  <item.icon className={`w-5 h-5 ${
+                  <item.icon className={`w-5 h-5 flex-shrink-0 ${
                     isActive(item.path) ? 'text-white' : item.color
                   }`} />
-                  <span className="font-medium">{item.name}</span>
+                  <span className={`font-medium whitespace-nowrap transition-all duration-300 ${
+                    isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+                  }`}>
+                    {item.name}
+                  </span>
                 </button>
 
                 {/* Submenu */}
-                {item.submenu && isActive(item.path) && (
-                  <div className="ml-8 mt-2 space-y-1">
+                {item.submenu && isActive(item.path) && isHovered && (
+                  <div className="ml-8 mt-2 space-y-1 transition-all duration-300">
                     {item.submenu.map((subItem) => (
                       <button
                         key={subItem.name}
@@ -182,34 +203,39 @@ const DashboardLayout = ({ children }) => {
           </nav>
 
           {/* Footer da Sidebar */}
-          <div className="p-4 border-t border-gray-700">
+          <div className="p-2 border-t border-gray-700">
             {/* Tema Claro/Escuro */}
             <button
               onClick={toggleTheme}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg mb-3 transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg mb-3 transition-all duration-200 ${
                 darkMode
                   ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
+              title={!isHovered ? (darkMode ? 'Tema Claro' : 'Tema Escuro') : ''}
             >
               {darkMode ? (
-                <Sun className="w-5 h-5 text-yellow-400" />
+                <Sun className="w-5 h-5 text-yellow-400 flex-shrink-0" />
               ) : (
-                <Moon className="w-5 h-5 text-blue-400" />
+                <Moon className="w-5 h-5 text-blue-400 flex-shrink-0" />
               )}
-              <span className="text-sm">
+              <span className={`text-sm whitespace-nowrap transition-all duration-300 ${
+                isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+              }`}>
                 {darkMode ? 'Tema Claro' : 'Tema Escuro'}
               </span>
             </button>
 
             {/* Usuário */}
-            <div className={`flex items-center gap-3 p-3 rounded-lg ${
+            <div className={`flex items-center gap-3 p-2 rounded-lg transition-all duration-300 ${
               darkMode ? 'bg-gray-700' : 'bg-gray-50'
             }`}>
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
                 <User className="w-4 h-4 text-white" />
               </div>
-              <div className="flex-1 min-w-0">
+              <div className={`flex-1 min-w-0 transition-all duration-300 ${
+                isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+              }`}>
                 <p className={`text-sm font-medium truncate ${
                   darkMode ? 'text-white' : 'text-gray-900'
                 }`}>
@@ -223,8 +249,10 @@ const DashboardLayout = ({ children }) => {
               </div>
               <button
                 onClick={handleLogout}
-                className="text-gray-400 hover:text-red-400 transition-colors"
-                title="Sair"
+                className={`text-gray-400 hover:text-red-400 transition-all duration-300 ${
+                  isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+                }`}
+                title={!isHovered ? 'Sair' : ''}
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -242,7 +270,9 @@ const DashboardLayout = ({ children }) => {
       )}
 
       {/* Conteúdo Principal */}
-      <div className="w-full pl-5 pr-5">
+      <div className={`w-full transition-all duration-300 ${
+        isHovered ? 'pl-5' : 'pl-5'
+      } pr-5`}>
         {/* Header */}
         <header className={`${
           darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
@@ -289,7 +319,9 @@ const DashboardLayout = ({ children }) => {
         </header>
 
         {/* Conteúdo */}
-        <main className="w-full">
+        <main className="w-full p-6">
+          {/* Conteúdo de demonstração */}
+          
           {children}
         </main>
       </div>

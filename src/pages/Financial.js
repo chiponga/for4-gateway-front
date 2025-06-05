@@ -84,7 +84,7 @@ const Financial = () => {
   const { data: balanceData, isLoading: balanceLoading, refetch: refetchBalance } = useQuery({
     queryKey: ['financial-balance'],
     queryFn: () => apiMethods.financial.balance(),
-    refetchInterval: 30000,
+    refetchInterval: 120000,
     onError: (error) => {
       toast.error('Erro ao carregar saldo');
       console.error('Balance error:', error);

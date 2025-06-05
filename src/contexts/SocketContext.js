@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 import toast from 'react-hot-toast';
+import { Criptografar, Descriptografar } from '../utils/crypto';
 
 const SocketContext = createContext();
 
@@ -28,13 +29,15 @@ export const SocketProvider = ({ children }) => {
         reconnectionDelay: 1000,
         reconnectionAttempts: 5,
         timeout: 20000,
+        withCredentials: true,           // <— permite cookies/credenciais
+        transports: ['websocket'],
       });
 
       // Event listeners
       newSocket.on('connect', () => {
         console.log('🔌 Socket conectado:', newSocket.id);
         setConnected(true);
-        
+
         // Entrar na sala do usuário
         newSocket.emit('join_user_room', user.id);
       });
@@ -52,6 +55,13 @@ export const SocketProvider = ({ children }) => {
       // Eventos de negócio
       newSocket.on('payment_created', (data) => {
         toast.success(`💰 Novo pagamento: ${data.amount}`);
+
+        try {
+          const payload = Descriptografar(data);
+          toast.success(`💰 Novo pagamento: ${payload.amount}`);
+        } catch (err) {
+          console.error('Erro ao descriptografar payment_created:', err);
+        }
         // Aqui você pode atualizar o estado global ou invalidar queries
       });
 
@@ -99,7 +109,7 @@ export const SocketProvider = ({ children }) => {
   // Função para emitir eventos
   const emit = (event, data) => {
     if (socket && connected) {
-      socket.emit(event, data);
+      socket.emit(event, Criptografar(data));
     } else {
       console.warn('Socket não conectado. Não foi possível emitir evento:', event);
     }
@@ -109,7 +119,7 @@ export const SocketProvider = ({ children }) => {
   const on = (event, callback) => {
     if (socket) {
       socket.on(event, callback);
-      
+
       // Retornar função de cleanup
       return () => socket.off(event, callback);
     }
